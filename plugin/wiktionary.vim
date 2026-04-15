@@ -284,6 +284,7 @@ def PopupFilter(id: number, key: string): bool
     if key == "\<LeftMouse>"
         var mpos = getmousepos()
         if mpos.winid != id
+            popup_close(id)
             return false
         endif
         var blines = getbufline(winbufnr(id), mpos.line, mpos.line)
