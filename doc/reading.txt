@@ -1,0 +1,135 @@
+*reading.txt*  a reading environment for vim
+
+CONTENTS                                            *reading-contents*
+
+    1. Overview .......................... |reading-overview|
+    2. Text numbers ...................... |reading-textnr|
+    3. Wiktionary lookup ................. |reading-wiktionary|
+    4. Word list ......................... |reading-wordlist|
+    5. Popup navigation .................. |reading-popup|
+    6. Configuration ..................... |reading-config|
+
+==============================================================================
+1. Overview                                         *reading-overview*
+
+A reading environment built on top of |goyo.vim|. Provides three
+features that use goyo's padding windows:
+
+    - paragraph numbers in the left pad
+    - wiktionary/dictionary lookup in a popup
+    - a scrollable word list of recent lookups in the right pad
+
+Requires Vim 9.0+ with |vim9script| support.
+Requires |goyo.vim| (https://github.com/junegunn/goyo.vim).
+
+When text numbers or the word list are toggled on, mouse scroll over
+the left pad scrolls the main content (keeping numbers in sync).
+Mouse scroll over the right pad scrolls the word list.
+
+==============================================================================
+2. Text numbers                                     *reading-textnr*
+
+Numbers non-blank lines in goyo's left padding window. Wrapped lines
+get blank rows so the numbers stay aligned with the text.
+
+:TextNrToggle                                       *:TextNrToggle*
+    Toggle text numbers. Starts goyo if it isn't running.
+
+:TextNrUpdate                                       *:TextNrUpdate*
+    Redraw the number pad (called automatically on scroll/cursor move).
+
+:TextNrRefresh                                      *:TextNrRefresh*
+    Recompute numbers and redraw (called automatically on text change).
+
+<Plug>(TextNrToggle)                                *<Plug>(TextNrToggle)*
+    Mapping to toggle text numbers.
+
+When enabled, typing a number on the command line and pressing Enter
+jumps to that paragraph number instead of that line number.
+
+==============================================================================
+3. Wiktionary lookup                                *reading-wiktionary*
+
+Look up word definitions in a popup window. Checks local pipe-delimited
+dictionary files first, then falls back to the Wiktionary REST API.
+
+:Define {word}                                      *:Define*
+    Look up {word} and show the definition in a popup.
+
+<Plug>(WiktLookup)                                  *<Plug>(WiktLookup)*
+    Normal mode: look up the word under the cursor.
+    Visual mode: look up the selected text.
+
+Example mappings: >vim
+    nmap K <Plug>(WiktLookup)
+    xmap K <Plug>(WiktLookup)
+<
+
+==============================================================================
+4. Word list                                        *reading-wordlist*
+
+Displays recently looked-up words alphabetically in goyo's right
+padding window. Words are persisted to disk and survive restarts.
+The list scrolls when it exceeds the window height.
+
+:WiktListToggle                                     *:WiktListToggle*
+    Toggle the word list display. Starts goyo if it isn't running.
+
+:WiktListUpdate                                     *:WiktListUpdate*
+    Refresh the word list display (called automatically on resize).
+
+:WiktListDisable                                    *:WiktListDisable*
+    Turn off the word list and clear the pad.
+
+<Plug>(WiktListToggle)                              *<Plug>(WiktListToggle)*
+    Mapping to toggle the word list.
+
+Interaction in the right pad window:
+
+    double-click    look up the word, cycling through the full list
+                    with left/right arrows in the popup
+    right-click     remove the word from the list
+
+Words are added automatically whenever a lookup succeeds, whether or
+not the word list display is active.
+
+==============================================================================
+5. Popup navigation                                 *reading-popup*
+
+Keys inside the definition popup:
+
+    j / Down / C-j      scroll down one line
+    k / Up / C-k        scroll up one line
+    d / C-d             scroll down half page
+    u / C-u             scroll up half page
+    h / Left            previous word in history
+    l / Right           next word in history
+    double-click        look up clicked word
+    q / Esc             close popup
+
+When navigating from the word list, left/right cycle through all words
+in the list (wrapping around) instead of the per-file history.
+
+==============================================================================
+6. Configuration                                    *reading-config*
+
+                                                    *g:wikt_dictionaries*
+g:wikt_dictionaries ~
+    List of local dictionary sources to check before querying Wiktionary.
+    Each entry is a dict with "path" and "name" keys. The file format is
+    one entry per line: `Word|definition text` >vim
+
+    let g:wikt_dictionaries = [
+        \ {'path': '~/dicts/silmarillion.txt', 'name': 'Silmarillion'},
+        \ ]
+<
+                                                    *g:wiktlist_persist_path*
+g:wiktlist_persist_path ~
+    Path to the file where the word list is saved between sessions.
+    Default: `~/.vim/junk/wikt_words` >vim
+
+    let g:wiktlist_persist_path = expand('~/.vim/junk/wikt_words')
+<
+
+==============================================================================
+ vim:tw=78:ts=8:ft=help:norl:
