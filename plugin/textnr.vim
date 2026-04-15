@@ -8,6 +8,7 @@ vim9script noclear
 # renders numbers in goyo's left padding window
 
 var enabled = false
+var source_bufnr = -1
 var textnrs: dict<number> = {}
 var nr_to_lnum: dict<number> = {}
 var max_nr = 0
@@ -32,7 +33,7 @@ def ComputeNumbers()
 enddef
 
 def UpdatePad()
-    if !exists('t:goyo_pads')
+    if !exists('t:goyo_pads') || bufnr() != source_bufnr
         return
     endif
 
@@ -126,6 +127,9 @@ def UpdatePad()
 enddef
 
 def Refresh()
+    if bufnr() != source_bufnr
+        return
+    endif
     ComputeNumbers()
     dirty = true
     UpdatePad()
@@ -144,6 +148,7 @@ def Disable()
         return
     endif
     enabled = false
+    source_bufnr = -1
     dirty = true
     last_w0 = -1
     last_w_last = -1
@@ -215,6 +220,7 @@ def Toggle()
             execute $'Goyo {w}x{h}'
         endif
         enabled = true
+        source_bufnr = bufnr()
         set wrap
         if !prop_initialized
             prop_type_add(prop_name, {highlight: 'LineNr'})
