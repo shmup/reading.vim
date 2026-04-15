@@ -201,8 +201,16 @@ def RedirectScroll(motion: string, count: number)
     var mpos = getmousepos()
     var right_pad = bufwinid(t:goyo_pads.r)
     if mpos.winid == right_pad
-        # let the right pad scroll (wiktlist may overflow)
-        win_execute(right_pad, $'normal! {count}{motion}')
+        # scroll right pad, but clamp so blanks don't scroll into view
+        if motion == "\<C-e>"
+            var info = getwininfo(right_pad)[0]
+            var lines = getbufline(t:goyo_pads.r, info.botline, '$')
+            if lines->indexof((_, v) => v =~ '\S') >= 0
+                win_execute(right_pad, $'normal! {count}{motion}')
+            endif
+        else
+            win_execute(right_pad, $'normal! {count}{motion}')
+        endif
     else
         # left/top/bottom pads and main window all scroll main content
         execute $'normal! {count}{motion}'
