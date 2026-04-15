@@ -281,7 +281,7 @@ def NavigateHistory(popup_id: number, delta: number)
 enddef
 
 def PopupFilter(id: number, key: string): bool
-    if key == "\<2-LeftMouse>"
+    if key == "\<LeftMouse>"
         var mpos = getmousepos()
         if mpos.winid != id
             return false
@@ -295,6 +295,8 @@ def PopupFilter(id: number, key: string): bool
             LookupWord(clicked)
         endif
         return true
+    elseif key == "\<LeftRelease>" || key == "\<LeftDrag>" || key == "\<2-LeftMouse>"
+        return getmousepos().winid == id
     elseif key == 'j' || key == "\<C-j>" || key == "\<Down>"
         var info = popup_getpos(id)
         var total = getbufline(winbufnr(id), 1, '$')->len()
