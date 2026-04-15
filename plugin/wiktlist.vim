@@ -11,6 +11,8 @@ var words: list<string> = []
 var persist_path = get(g:, 'wiktlist_persist_path', $'{$HOME}/.vim/junk/wikt_words')
 var prop_name = 'wiktlist_hl'
 var prop_initialized = false
+var saved_dblclick_n: dict<any> = {}
+var saved_rightclick_n: dict<any> = {}
 
 def LoadWords()
     words = []
@@ -189,8 +191,18 @@ def Disable()
         return
     endif
     enabled = false
-    silent! nunmap <2-LeftMouse>
-    silent! nunmap <RightMouse>
+    if !saved_dblclick_n->empty()
+        mapset('n', false, saved_dblclick_n)
+    else
+        silent! nunmap <2-LeftMouse>
+    endif
+    if !saved_rightclick_n->empty()
+        mapset('n', false, saved_rightclick_n)
+    else
+        silent! nunmap <RightMouse>
+    endif
+    saved_dblclick_n = {}
+    saved_rightclick_n = {}
     augroup WiktListDisplay
         autocmd!
     augroup END
@@ -223,6 +235,8 @@ def Toggle()
         set wrap
         LoadWords()
         UpdatePad()
+        saved_dblclick_n = maparg('<2-LeftMouse>', 'n', false, true)
+        saved_rightclick_n = maparg('<RightMouse>', 'n', false, true)
         nnoremap <2-LeftMouse> <ScriptCmd>HandleDoubleClick()<CR>
         nnoremap <RightMouse> <ScriptCmd>HandleRightClick()<CR>
         augroup WiktListDisplay
