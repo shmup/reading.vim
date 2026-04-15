@@ -11,7 +11,7 @@ var words: list<string> = []
 var persist_path = get(g:, 'wiktlist_persist_path', $'{$HOME}/.vim/junk/wikt_words')
 var prop_name = 'wiktlist_hl'
 var prop_initialized = false
-var saved_dblclick_n: dict<any> = {}
+var saved_leftclick_n: dict<any> = {}
 var saved_rightclick_n: dict<any> = {}
 
 def LoadWords()
@@ -135,15 +135,14 @@ def UpdatePad()
     setbufvar(pad_bufnr, '&modifiable', 0)
 enddef
 
-def HandleDoubleClick()
+def HandleClick()
     var mpos = getmousepos()
-    if !exists('t:goyo_pads')
-        normal! viw
-        return
-    endif
-    var pad_winid = PadWinid()
-    if mpos.winid != pad_winid
-        normal! viw
+    var is_pad = exists('t:goyo_pads') && mpos.winid == PadWinid()
+    if !is_pad
+        # pass through: position cursor at click
+        var pos = getmousepos()
+        win_gotoid(pos.winid)
+        cursor(pos.line, pos.column)
         return
     endif
     var idx = mpos.line - 1
@@ -162,7 +161,6 @@ def HandleDoubleClick()
     # seed wiktionary nav list so left/right arrows cycle all words
     g:wikt_nav_words = copy(words)
     g:wikt_nav_pos = idx
-    # defer so mouse events from the double-click settle first
     timer_start(50, (_) => {
         execute 'Define' target_word
     })
@@ -191,17 +189,17 @@ def Disable()
         return
     endif
     enabled = false
-    if !saved_dblclick_n->empty()
-        mapset('n', false, saved_dblclick_n)
+    if !saved_leftclick_n->empty()
+        mapset('n', false, saved_leftclick_n)
     else
-        silent! nunmap <2-LeftMouse>
+        silent! nunmap <LeftMouse>
     endif
     if !saved_rightclick_n->empty()
         mapset('n', false, saved_rightclick_n)
     else
         silent! nunmap <RightMouse>
     endif
-    saved_dblclick_n = {}
+    saved_leftclick_n = {}
     saved_rightclick_n = {}
     augroup WiktListDisplay
         autocmd!
@@ -235,9 +233,9 @@ def Toggle()
         set wrap
         LoadWords()
         UpdatePad()
-        saved_dblclick_n = maparg('<2-LeftMouse>', 'n', false, true)
+        saved_leftclick_n = maparg('<LeftMouse>', 'n', false, true)
         saved_rightclick_n = maparg('<RightMouse>', 'n', false, true)
-        nnoremap <2-LeftMouse> <ScriptCmd>HandleDoubleClick()<CR>
+        nnoremap <LeftMouse> <ScriptCmd>HandleClick()<CR>
         nnoremap <RightMouse> <ScriptCmd>HandleRightClick()<CR>
         augroup WiktListDisplay
             autocmd!
