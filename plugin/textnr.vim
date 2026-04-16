@@ -16,7 +16,6 @@ var prop_name = 'textnr_hl'
 var prop_initialized = false
 var last_w0 = -1
 var last_w_last = -1
-var dirty = true
 var saved_cr_c: dict<any> = {}
 var saved_scrollup_n: dict<any> = {}
 var saved_scrolldown_n: dict<any> = {}
@@ -53,11 +52,10 @@ def UpdatePad()
     var win_height = winheight(0)
 
     # skip redraw if viewport unchanged (avoids blink from unrelated scroll)
-    if !dirty && first == last_w0 && last == last_w_last
+    if first == last_w0 && last == last_w_last
         win_execute(pad_winid, 'normal! gg')
         return
     endif
-    dirty = false
     last_w0 = first
     last_w_last = last
 
@@ -134,7 +132,8 @@ def Refresh()
         return
     endif
     ComputeNumbers()
-    dirty = true
+    last_w0 = -1
+    last_w_last = -1
     UpdatePad()
 enddef
 
@@ -152,7 +151,6 @@ def Disable()
     endif
     enabled = false
     source_bufnr = -1
-    dirty = true
     last_w0 = -1
     last_w_last = -1
     if !saved_cr_c->empty()
