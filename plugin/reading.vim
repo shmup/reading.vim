@@ -17,21 +17,18 @@ var upper_prop_initialized = false
 def ApplyUppercaseProps()
     prop_remove({type: upper_prop, all: true})
     for lnum in range(1, line('$'))
-        if getline(lnum) =~ '\S' && getline(lnum) =~ '^[^a-z]*$'
+        var text = getline(lnum)
+        if text =~ '\S' && text =~ '^[^a-z]*$'
             prop_add(lnum, 1, {
                 type: upper_prop,
-                length: len(getline(lnum)),
+                length: len(text),
             })
         endif
     endfor
 enddef
 
 def Toggle()
-    if exists('#goyo')
-        Goyo
-    else
-        Goyo
-    endif
+    Goyo
 enddef
 
 def Enable()
