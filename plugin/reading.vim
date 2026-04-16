@@ -26,6 +26,14 @@ def ApplyUppercaseProps()
     endfor
 enddef
 
+def Toggle()
+    if exists('#goyo')
+        Goyo
+    else
+        Goyo
+    endif
+enddef
+
 def Enable()
     if enabled
         return
@@ -46,6 +54,9 @@ def Enable()
         upper_prop_initialized = true
     endif
     ApplyUppercaseProps()
+
+    silent TextNrToggle
+    silent WiktListToggle
 enddef
 
 def Disable()
@@ -71,6 +82,9 @@ def Disable()
     # remove uppercase highlight
     prop_remove({type: upper_prop, all: true})
 enddef
+
+command ReadingToggle Toggle()
+nnoremap <Plug>(ReadingToggle) <ScriptCmd>Toggle()<CR>
 
 augroup ReadingMode
     autocmd!

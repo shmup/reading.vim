@@ -27,7 +27,10 @@ or as a git submodule:
 
 `K` is mapped to `:Define` in reading buffers. the others are `<Plug>` mappings you can bind yourself (these are [tpope](https://github.com/tpope/vim-unimpaired/blob/master/doc/unimpaired.txt#L77-L95) flavored):
 
+    nmap yoo <Plug>(ReadingToggle)
     nmap yoN <Plug>(TextNrToggle)
     nmap yoW <Plug>(WiktListToggle)
+
+`:ReadingToggle` enters goyo and enables all pads in one shot. the individual toggles flip pieces mid-session.
 
 see `:help reading.txt` for full documentation
