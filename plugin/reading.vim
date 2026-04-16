@@ -76,4 +76,5 @@ augroup ReadingMode
     autocmd!
     autocmd User GoyoEnter Enable()
     autocmd User GoyoLeave Disable()
+    autocmd BufEnter * if enabled | ApplyUppercaseProps() | endif
 augroup END
