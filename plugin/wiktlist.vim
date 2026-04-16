@@ -231,7 +231,6 @@ def Toggle()
         endif
         enabled = true
         set wrap
-        LoadWords()
         UpdatePad()
         saved_leftclick_n = maparg('<LeftMouse>', 'n', false, true)
         saved_rightclick_n = maparg('<RightMouse>', 'n', false, true)
