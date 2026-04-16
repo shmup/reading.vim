@@ -285,7 +285,7 @@ def PopupFilter(id: number, key: string): bool
         var mpos = getmousepos()
         if mpos.winid != id
             popup_close(id)
-            return false
+            return true # swallow click-off so cursor chills
         endif
         var blines = getbufline(winbufnr(id), mpos.line, mpos.line)
         if blines->empty()
@@ -403,6 +403,7 @@ def ShowPopup(lines: list<string>, word: string)
         highlight: 'Normal',
         borderHighlight: ['Normal'],
         filter: PopupFilter,
+        mapping: 0,
         callback: ClearSourceHighlight,
     })
     current_popup = popup_id

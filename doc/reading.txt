@@ -86,7 +86,7 @@ The list scrolls when it exceeds the window height.
 
 Interaction in the right pad window:
 
-    double-click    look up the word, cycling through the full list
+    click           look up the word, cycling through the full list
                     with left/right arrows in the popup
     right-click     remove the word from the list
 
@@ -104,7 +104,7 @@ Keys inside the definition popup:
     u / C-u             scroll up half page
     h / Left            previous word in history
     l / Right           next word in history
-    double-click        look up clicked word
+    click               look up clicked word
     q / Esc             close popup
 
 When navigating from the word list, left/right cycle through all words
