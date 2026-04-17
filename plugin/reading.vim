@@ -42,8 +42,8 @@ def Enable()
     saved_K_x = maparg('K', 'x', false, true)
 
     # K looks up word definition
-    nmap <buffer> <silent> K <Plug>(WiktLookup)
-    xmap <buffer> <silent> K <Plug>(WiktLookup)
+    nmap <silent> K <Plug>(WiktLookup)
+    xmap <silent> K <Plug>(WiktLookup)
 
     # uppercase-only lines rendered as comments (text properties survive clearmatches)
     if !upper_prop_initialized
@@ -66,12 +66,12 @@ def Disable()
     if !saved_K_n->empty()
         mapset('n', false, saved_K_n)
     else
-        silent! nunmap <buffer> K
+        silent! nunmap K
     endif
     if !saved_K_x->empty()
         mapset('x', false, saved_K_x)
     else
-        silent! xunmap <buffer> K
+        silent! xunmap K
     endif
     saved_K_n = {}
     saved_K_x = {}
