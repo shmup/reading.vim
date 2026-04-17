@@ -24,6 +24,10 @@ def LoadWords()
 enddef
 
 def SaveWords()
+    var dir = fnamemodify(persist_path, ':h')
+    if !isdirectory(dir)
+        mkdir(dir, 'p')
+    endif
     writefile(words, persist_path)
 enddef
 
