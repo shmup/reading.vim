@@ -28,10 +28,11 @@ def LoadDict(filepath: string): dict<string>
     var entries: dict<string> = {}
     var aliases: dict<string> = {}
     var names: dict<string> = {}
-    if !filereadable(filepath)
+    var resolved = expand(filepath)
+    if !filereadable(resolved)
         return entries
     endif
-    for line in readfile(filepath)
+    for line in readfile(resolved)
         var bar = line->stridx('|')
         if bar < 0
             continue
