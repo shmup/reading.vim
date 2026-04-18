@@ -34,9 +34,27 @@ def ComputeNumbers()
     max_nr = nr
 enddef
 
+def IsGoyoPad(): bool
+    if !exists('t:goyo_pads')
+        return false
+    endif
+    var bnr = bufnr()
+    return bnr == t:goyo_pads.l
+        || bnr == t:goyo_pads.r
+        || bnr == t:goyo_pads.t
+        || bnr == t:goyo_pads.b
+enddef
+
 def UpdatePad()
-    if !exists('t:goyo_pads') || bufnr() != source_bufnr
+    if !exists('t:goyo_pads') || IsGoyoPad()
         return
+    endif
+    # follow buffer switches (e.g. via Ctrl-^)
+    if bufnr() != source_bufnr
+        source_bufnr = bufnr()
+        ComputeNumbers()
+        last_w0 = -1
+        last_w_last = -1
     endif
 
     var pad_bufnr = t:goyo_pads.l
@@ -128,9 +146,10 @@ def UpdatePad()
 enddef
 
 def Refresh()
-    if bufnr() != source_bufnr
+    if !exists('t:goyo_pads') || IsGoyoPad()
         return
     endif
+    source_bufnr = bufnr()
     ComputeNumbers()
     last_w0 = -1
     last_w_last = -1
