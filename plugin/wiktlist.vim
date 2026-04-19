@@ -17,9 +17,7 @@ var saved_rightclick_n: dict<any> = {}
 def LoadWords()
     words = []
     if filereadable(persist_path)
-        words = readfile(persist_path)->filter((_, v) => v =~ '\S')
-            ->sort((a, b) => a->tolower() < b->tolower() ? -1
-                : a->tolower() > b->tolower() ? 1 : 0)
+        words = readfile(persist_path)->filter((_, v) => v =~ '\S')->sort('i')
     endif
 enddef
 
@@ -35,19 +33,12 @@ def AddWord(word: string)
     if word->empty()
         return
     endif
-    # skip if already in list
     var lower = word->tolower()
-    for w in words
-        if w->tolower() == lower
-            return
-        endif
-    endfor
-    # insert alphabetically
-    var idx = 0
-    while idx < words->len() && words[idx]->tolower() < lower
-        idx += 1
-    endwhile
-    words->insert(word, idx)
+    if words->indexof((_, w) => w->tolower() == lower) >= 0
+        return
+    endif
+    words->add(word)
+    words->sort('i')
     SaveWords()
     if enabled
         UpdatePad()
@@ -59,18 +50,15 @@ def RemoveWord(word: string)
         return
     endif
     var lower = word->tolower()
-    var idx = 0
-    for w in words
-        if w->tolower() == lower
-            words->remove(idx)
-            SaveWords()
-            if enabled
-                UpdatePad()
-            endif
-            return
-        endif
-        idx += 1
-    endfor
+    var idx = words->indexof((_, w) => w->tolower() == lower)
+    if idx < 0
+        return
+    endif
+    words->remove(idx)
+    SaveWords()
+    if enabled
+        UpdatePad()
+    endif
 enddef
 
 def PadBufnr(): number
