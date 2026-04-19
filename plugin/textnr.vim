@@ -253,7 +253,7 @@ def RedirectScroll(motion: string, count: number)
         # scroll right pad, but clamp so blanks don't scroll into view
         if motion == "\<C-e>"
             var info = getwininfo(right_pad)[0]
-            var lines = getbufline(t:goyo_pads.r, info.botline, '$')
+            var lines = getbufline(t:goyo_pads.r, info.botline + 1, '$')
             if lines->indexof((_, v) => v =~ '\S') >= 0
                 win_execute(right_pad, $'normal! {count}{motion}')
             endif
