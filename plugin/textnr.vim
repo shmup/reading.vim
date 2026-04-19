@@ -19,6 +19,8 @@ var last_w_last = -1
 var saved_cr_c: dict<any> = {}
 var saved_scrollup_n: dict<any> = {}
 var saved_scrolldown_n: dict<any> = {}
+var saved_scrollleft_n: dict<any> = {}
+var saved_scrollright_n: dict<any> = {}
 
 def ComputeNumbers()
     textnrs = {}
@@ -187,9 +189,21 @@ def Disable()
     else
         silent! nunmap <ScrollWheelDown>
     endif
+    if !saved_scrollleft_n->empty()
+        mapset('n', false, saved_scrollleft_n)
+    else
+        silent! nunmap <ScrollWheelLeft>
+    endif
+    if !saved_scrollright_n->empty()
+        mapset('n', false, saved_scrollright_n)
+    else
+        silent! nunmap <ScrollWheelRight>
+    endif
     saved_cr_c = {}
     saved_scrollup_n = {}
     saved_scrolldown_n = {}
+    saved_scrollleft_n = {}
+    saved_scrollright_n = {}
     augroup TextNr
         autocmd!
     augroup END
@@ -273,9 +287,13 @@ def Toggle()
         saved_cr_c = maparg('<CR>', 'c', false, true)
         saved_scrollup_n = maparg('<ScrollWheelUp>', 'n', false, true)
         saved_scrolldown_n = maparg('<ScrollWheelDown>', 'n', false, true)
+        saved_scrollleft_n = maparg('<ScrollWheelLeft>', 'n', false, true)
+        saved_scrollright_n = maparg('<ScrollWheelRight>', 'n', false, true)
         cnoremap <expr> <CR> <SID>TranslateCmd()
         execute $'nnoremap <ScrollWheelUp> <ScriptCmd>RedirectScroll("\<C-y>", 3)<CR>'
         execute $'nnoremap <ScrollWheelDown> <ScriptCmd>RedirectScroll("\<C-e>", 3)<CR>'
+        nnoremap <ScrollWheelLeft> <Nop>
+        nnoremap <ScrollWheelRight> <Nop>
         augroup TextNr
             autocmd!
             autocmd CursorMoved,WinScrolled * TextNrUpdate
